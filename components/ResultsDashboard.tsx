@@ -25,7 +25,9 @@ export default function ResultsDashboard({
   ], [breakdown]);
 
   useEffect(() => {
-    let active = true;
+    const controller = new AbortController();
+    const { signal } = controller;
+
     async function fetchInsights() {
       try {
         const res = await fetch('/api/insights', {
@@ -33,12 +35,13 @@ export default function ResultsDashboard({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ breakdown })
+          body: JSON.stringify({ breakdown }),
+          signal
         });
         const data = await res.json();
-        if (active && data.tips) setTips(data.tips);
-      } catch (err) {
-         if (active) {
+        if (!signal.aborted && data.tips) setTips(data.tips);
+      } catch (err: any) {
+         if (!signal.aborted) {
             setTips([
               "Consider switching to a renewable energy provider.", 
               "Carpool or combine errands to reduce transport miles.", 
@@ -46,11 +49,13 @@ export default function ResultsDashboard({
             ]);
          }
       } finally {
-        if (active) setLoadingTips(false);
+        if (!signal.aborted) setLoadingTips(false);
       }
     }
     fetchInsights();
-    return () => { active = false; };
+    return () => { 
+      controller.abort(); 
+    };
   }, [breakdown]);
 
   return (

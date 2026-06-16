@@ -27,19 +27,19 @@ export default function FootprintApp() {
   const [data, setData] = useState<FootprintData>(INITIAL_DATA);
   const [breakdown, setBreakdown] = useState<CarbonBreakdown | null>(null);
 
-  const handleCalculate = (formData: FootprintData) => {
+  const handleCalculate = React.useCallback((formData: FootprintData) => {
     setData(formData); // Store it in case we need it later
     const result = calculateFootprint(formData);
     setBreakdown(result);
     // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = React.useCallback(() => {
     setData(INITIAL_DATA);
     setBreakdown(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
   return (
     <div className="w-full">
