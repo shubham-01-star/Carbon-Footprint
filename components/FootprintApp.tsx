@@ -1,11 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { FootprintData, CarbonBreakdown } from '../types/footprint';
 import { calculateFootprint } from '../utils/calculations';
-import ResultsDashboard from './ResultsDashboard';
 import FootprintForm from './FootprintForm';
 import { AnimatePresence, motion } from 'motion/react';
+
+const ResultsDashboard = dynamic(() => import('./ResultsDashboard'), { 
+  ssr: false, 
+  loading: () => (
+    <div className="w-full h-96 flex items-center justify-center animate-pulse bg-emerald-50 rounded-3xl ring-1 ring-emerald-100">
+      <p className="text-emerald-700 font-medium">Loading visualization...</p>
+    </div>
+  )
+});
 
 const INITIAL_DATA: FootprintData = {
   carMilesPerWeek: 0,

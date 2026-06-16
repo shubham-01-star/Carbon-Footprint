@@ -17,11 +17,12 @@ export default function ResultsDashboard({
   const [tips, setTips] = useState<string[]>([]);
   const [loadingTips, setLoadingTips] = useState(true);
 
-  const chartData = [
+  // Memoize chart data mapping to prevent expensive rebuilds on other state changes
+  const chartData = React.useMemo(() => [
     { name: 'Transportation', value: breakdown.transportation },
     { name: 'Home Energy', value: breakdown.energy },
     { name: 'Diet', value: breakdown.diet },
-  ];
+  ], [breakdown]);
 
   useEffect(() => {
     let active = true;

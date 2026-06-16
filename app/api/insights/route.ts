@@ -4,7 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 // Fallback logic structure for when key is missing or system limits reached
 export async function POST(req: NextRequest) {
   try {
-    const { breakdown } = await req.json();
+    const body = await req.json();
+    const { breakdown } = body;
+
+    // Strict input validation
+    if (!breakdown || typeof breakdown.total !== 'number') {
+      return NextResponse.json({ error: "Invalid footprint payload provided." }, { status: 400 });
+    }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {

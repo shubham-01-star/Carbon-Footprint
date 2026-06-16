@@ -1,19 +1,35 @@
 import { FootprintData, CarbonBreakdown } from '../types/footprint';
 
+const EMISSION_FACTORS = {
+  CO2_PER_MILE: 0.4,
+  CO2_PER_FLIGHT: 1000,
+  CO2_PER_DOLLAR_ELECTRICITY: 5,
+  WEEKS_IN_YEAR: 52,
+  MONTHS_IN_YEAR: 12,
+};
+
+const DIET_EMISSIONS: Record<FootprintData['diet'], number> = {
+  'meat-heavy': 3000,
+  average: 2000,
+  vegetarian: 1200,
+  vegan: 800,
+};
+
+/**
+ * Calculates the annual carbon footprint based on user inputs.
+ * Resolves specific activity volumes into common Carbon Dioxide Equivalent (CO2e) units.
+ * 
+ * @param {FootprintData} data - The user's activity and consumption data.
+ * @returns {CarbonBreakdown} A categorized breakdown of estimated yearly emissions in kg CO2e.
+ */
 export function calculateFootprint(data: FootprintData): CarbonBreakdown {
-  // Simple conversion metrics logic 
-  // Car: avg 0.4 kg CO2e per mile
-  // Flights: ~1000 kg CO2e per average short/medium flight
-  const transportation = (data.carMilesPerWeek * 52 * 0.4) + (data.flightsPerYear * 1000);
+  const transportation = 
+    (data.carMilesPerWeek * EMISSION_FACTORS.WEEKS_IN_YEAR * EMISSION_FACTORS.CO2_PER_MILE) + 
+    (data.flightsPerYear * EMISSION_FACTORS.CO2_PER_FLIGHT);
   
-  // Energy: roughly mapping $1 bill to ~5kg standard grid emissions
-  const energy = data.electricityBill * 12 * 5;
+  const energy = data.electricityBill * EMISSION_FACTORS.MONTHS_IN_YEAR * EMISSION_FACTORS.CO2_PER_DOLLAR_ELECTRICITY;
   
-  // Diet footprint baseline per year
-  let diet = 2000;
-  if (data.diet === 'meat-heavy') diet = 3000;
-  if (data.diet === 'vegetarian') diet = 1200;
-  if (data.diet === 'vegan') diet = 800;
+  const diet = DIET_EMISSIONS[data.diet] || DIET_EMISSIONS.average;
 
   const total = transportation + energy + diet;
 
