@@ -1,0 +1,6 @@
+{
+  "name": "Carbon Footprint Platform",
+  "description": "An eco-friendly platform to calculate, visualize, and reduce your carbon footprint with personalized AI recommendations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
